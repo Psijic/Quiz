@@ -31,7 +31,7 @@ class MainActivity : AppCompatActivity() {
 		} else if (key == REGIONS) {
 			// regions to include changed
 			val regions = sharedPreferences.getStringSet(REGIONS, null)
-			if (!regions.isEmpty()) {
+			if (regions.isNotEmpty()) {
 				quizFragment.updateRegions(sharedPreferences)
 				quizFragment.resetQuiz()
 			} else {

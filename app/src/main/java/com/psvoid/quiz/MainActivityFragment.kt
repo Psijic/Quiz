@@ -190,7 +190,7 @@ class MainActivityFragment : Fragment() {
 			if (!quizCountriesList.contains(filename)) {
 				// add the file to the list
 				quizCountriesList.add(filename)
-				++flagCounter
+				flagCounter++
 			}
 		}
 

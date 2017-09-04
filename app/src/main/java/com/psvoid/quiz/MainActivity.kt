@@ -28,22 +28,23 @@ class MainActivity : AppCompatActivity() {
 			// # of choices to display changed
 			quizFragment.updateGuessRows(sharedPreferences)
 			quizFragment.resetQuiz()
-		} else if (key == REGIONS) {
-			// regions to include changed
-			val regions = sharedPreferences.getStringSet(REGIONS, null)
-			if (regions.isNotEmpty()) {
-				quizFragment.updateRegions(sharedPreferences)
-				quizFragment.resetQuiz()
-			} else {
-				// must select one region--set North America as default
-				val editor = sharedPreferences.edit()
-				regions!!.add(getString(R.string.default_region))
-				editor.putStringSet(REGIONS, regions)
-				editor.apply()
-
-				Toast.makeText(this@MainActivity, R.string.default_region_message, Toast.LENGTH_SHORT).show()
-			}
 		}
+//		else if (key == REGIONS) {
+//			// regions to include changed
+//			val regions = sharedPreferences.getStringSet(REGIONS, null)
+//			if (regions.isNotEmpty()) {
+//				quizFragment.updateRegions(sharedPreferences)
+//				quizFragment.resetQuiz()
+//			} else {
+//				// must select one region--set North America as default
+//				val editor = sharedPreferences.edit()
+//				regions!!.add(getString(R.string.default_region))
+//				editor.putStringSet(REGIONS, regions)
+//				editor.apply()
+//
+//				Toast.makeText(this@MainActivity, R.string.default_region_message, Toast.LENGTH_SHORT).show()
+//			}
+//		}
 
 		Toast.makeText(this@MainActivity, R.string.restarting_quiz, Toast.LENGTH_SHORT).show()
 	}
@@ -79,7 +80,7 @@ class MainActivity : AppCompatActivity() {
 			val quizFragment = supportFragmentManager.findFragmentById(R.id.quizFragment) as MainActivityFragment
 
 			quizFragment.updateGuessRows(PreferenceManager.getDefaultSharedPreferences(this))
-			quizFragment.updateRegions(PreferenceManager.getDefaultSharedPreferences(this))
+//			quizFragment.updateRegions(PreferenceManager.getDefaultSharedPreferences(this))
 			quizFragment.resetQuiz()
 
 			isPreferencesChanged = false
@@ -117,7 +118,7 @@ class MainActivity : AppCompatActivity() {
 		 * keys for reading data from SharedPreferences
 		 */
 		val CHOICES = "pref_numberOfChoices"
-		val REGIONS = "pref_regionsToInclude"
+//		val REGIONS = "pref_regionsToInclude"
 	}
 
 }

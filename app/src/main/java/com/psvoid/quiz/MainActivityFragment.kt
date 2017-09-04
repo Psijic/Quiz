@@ -31,8 +31,8 @@ class MainActivityFragment : Fragment() {
 
 
 	private var fileNameList: MutableList<String> = ArrayList() // flag file names
-	private var quizCountriesList: MutableList<String> = ArrayList() // countries in current quiz
-	private var regionsSet: Set<String>? = null // world regions in current quiz
+	private var questionsList: MutableList<String> = ArrayList() // countries in current quiz
+//	private var regionsSet: Set<String>? = null // world regions in current quiz
 	private var correctAnswer: String = "" // correct country for the current flag
 	private var totalGuesses: Int = 0 // number of guesses made
 	private var correctAnswers: Int = 0 // number of correct guesses
@@ -43,16 +43,17 @@ class MainActivityFragment : Fragment() {
 	private lateinit var shakeAnimation: Animation // animation for incorrect guess
 	private lateinit var quizLinearLayout: LinearLayout// layout that contains the quiz
 	private lateinit var questionNumberTextView: TextView // shows current question #
-	private lateinit var flagImageView: ImageView // displays a flag
+	private lateinit var questionImageView: ImageView // displays a flag
 	private lateinit var guessLinearLayouts: Array<LinearLayout> // rows of answer Buttons
 	private lateinit var answerTextView: TextView // displays correct answer
 
+	private val CHAMPIONS_FOLDER = "Champions"
 	private val ANIMATION_TIME: Long = 2000
 
 	private val guessButtonListener = OnClickListener { v ->
 		val guessButton = v as Button
 		val guess = guessButton.text.toString()
-		val answer = getCountryName(correctAnswer)
+		val answer = getChampionName(correctAnswer)
 
 		totalGuesses++
 
@@ -65,15 +66,15 @@ class MainActivityFragment : Fragment() {
 			answerTextView.setTextColor(resources.getColor(R.color.correct_answer, context.theme))
 			disableAnswerButtons()
 
-			// if the user has correctly identified FLAGS_IN_QUIZ flags
-			if (correctAnswers == FLAGS_IN_QUIZ)
+			// if the user has correctly identified QUESTIONS_COUNT flags
+			if (correctAnswers == QUESTIONS_COUNT)
 				finishGame()
 			else
 				handler.postDelayed({ animate(true) }, ANIMATION_TIME)
 		}
 		//wrong answer
 		else {
-			flagImageView.startAnimation(shakeAnimation)
+			questionImageView.startAnimation(shakeAnimation)
 			answerTextView.setText(R.string.incorrect_answer)
 			answerTextView.setTextColor(resources.getColor(R.color.incorrect_answer, context.theme))
 			guessButton.isEnabled = false
@@ -108,7 +109,7 @@ class MainActivityFragment : Fragment() {
 		// get references to GUI components
 		quizLinearLayout = view.findViewById(R.id.quizLinearLayout) as LinearLayout
 		questionNumberTextView = view.findViewById(R.id.questionNumberTextView) as TextView
-		flagImageView = view.findViewById(R.id.flagImageView) as ImageView
+		questionImageView = view.findViewById(R.id.questionImageView) as ImageView
 		answerTextView = view.findViewById(R.id.answerTextView) as TextView
 
 		guessLinearLayouts = arrayOf(view.findViewById(R.id.row1LinearLayout) as LinearLayout,
@@ -125,7 +126,7 @@ class MainActivityFragment : Fragment() {
 		}
 
 		// set question number
-		questionNumberTextView.text = getString(R.string.question, 1, FLAGS_IN_QUIZ)
+		questionNumberTextView.text = getString(R.string.question, 1, QUESTIONS_COUNT)
 		// return the fragment's view for display
 		return view
 	}
@@ -150,9 +151,9 @@ class MainActivityFragment : Fragment() {
 	/**
 	 * Update world regions for quiz based on values in SharedPreferences
 	 */
-	fun updateRegions(sharedPreferences: SharedPreferences) {
-		regionsSet = sharedPreferences.getStringSet(MainActivity.REGIONS, null)
-	}
+//	fun updateRegions(sharedPreferences: SharedPreferences) {
+//		regionsSet = sharedPreferences.getStringSet(MainActivity.REGIONS, null)
+//	}
 
 	/**
 	 * start a new game
@@ -162,13 +163,15 @@ class MainActivityFragment : Fragment() {
 		val assets = activity.assets
 		fileNameList.clear() // empty list of image file names
 		try {
-			// loop through each region
-			for (region in regionsSet!!) {
-				// get a list of all flag image files in this region
-				val paths = assets.list(region)
+			// loop through each folder
+//			for (region in regionsSet!!) {
+				// get a list of all images in this folder
+//				val paths = assets.list(region)
+
+			val paths = assets.list(CHAMPIONS_FOLDER)
 				for (path in paths)
 					fileNameList.add(path.replace(".png", ""))
-			}
+//			}
 		} catch (exception: IOException) {
 			Log.e(TAG, "Error loading image file names", exception)
 		}
@@ -176,21 +179,21 @@ class MainActivityFragment : Fragment() {
 		correctAnswers = 0
 		totalGuesses = 0
 		// clear prior list of quiz countries
-		quizCountriesList.clear()
+		questionsList.clear()
 
-		var flagCounter = 1
-		val numberOfFlags = fileNameList.size
+		var questionCounter = 1
+		val championsNumber = fileNameList.size
 
-		// add FLAGS_IN_QUIZ random file names to the quizCountriesList
-		while (flagCounter <= FLAGS_IN_QUIZ) {
-			val randomIndex = random.nextInt(numberOfFlags)
+		// add QUESTIONS_COUNT random file names to the questionsList
+		while (questionCounter <= QUESTIONS_COUNT) {
+			val randomIndex = random.nextInt(championsNumber)
 			// get the random file name
 			val filename = fileNameList[randomIndex]
 			// if the region is enabled and it hasn't already been chosen
-			if (!quizCountriesList.contains(filename)) {
+			if (!questionsList.contains(filename)) {
 				// add the file to the list
-				quizCountriesList.add(filename)
-				++flagCounter
+				questionsList.add(filename)
+				questionCounter++
 			}
 		}
 
@@ -202,26 +205,25 @@ class MainActivityFragment : Fragment() {
 	 * Load next question
 	 */
 	private fun loadNextQuestion() {
-		// get file name of the next flag and remove it from the list
-		val nextImage = quizCountriesList.removeAt(0)
+		// get file name of the next question and remove it from the list
+		val nextImage = questionsList.removeAt(0)
 
 		// update the correct answer
 		correctAnswer = nextImage
 		answerTextView.text = ""
 		// display current question number
-		questionNumberTextView.text = getString(R.string.question, correctAnswers + 1, FLAGS_IN_QUIZ)
+		questionNumberTextView.text = getString(R.string.question, correctAnswers + 1, QUESTIONS_COUNT)
 
-		// extract the region from the next image's name
-		val region = nextImage.substring(0, nextImage.indexOf('-'))
 		// use AssetManager to load next image from assets folder
 		val assets = activity.assets
-		// get an InputStream to the asset representing the next flag and try to use the InputStream
+		// get an InputStream to the asset representing the next image and try to use the InputStream
 		try {
-			assets.open("$region/$nextImage.png").use { stream ->
-				// load the asset as a Drawable and display on the flagImageView
-				val flag = Drawable.createFromStream(stream, nextImage)
-				flagImageView.setImageDrawable(flag)
-				animate(false) // animate the flag onto the screen
+			assets.open("$CHAMPIONS_FOLDER/$nextImage.png").use { stream ->
+				// load the asset as a Drawable and display on the questionImageView
+				val champion = Drawable.createFromStream(stream, nextImage)
+				questionImageView.setImageDrawable(champion)
+				// animate the image
+				animate(false)
 			}
 		} catch (exception: IOException) {
 			Log.e(TAG, "Error loading " + nextImage, exception)
@@ -242,28 +244,28 @@ class MainActivityFragment : Fragment() {
 				newGuessButton.isEnabled = true
 				// get country name and set it as newGuessButton's text
 				val filename = fileNameList[row * 2 + column]
-				newGuessButton.text = getCountryName(filename)
+				newGuessButton.text = getChampionName(filename)
 			}
 		}
 		// randomly replace one Button with the correct answer
 		val row = random.nextInt(guessRows) // pick random row
 		val column = random.nextInt(2) // pick random column
 		val randomRow = guessLinearLayouts[row] // get the row
-		val countryName = getCountryName(correctAnswer)
 
-		(randomRow.getChildAt(column) as Button).text = countryName
+		(randomRow.getChildAt(column) as Button).text = getChampionName(correctAnswer)
 	}
 
 	/**
-	 * Parses the country flag file name and returns the country name
+	 * Parse filename
 	 */
-	private fun getCountryName(name: String?): String = name!!.substring(name.indexOf('-') + 1).replace('_', ' ')
+//	private fun getChampionName(name: String?): String = name!!.substring(name.indexOf('-') + 1).replace('_', ' ')
+	private fun getChampionName(name: String): String = name
 
 	/**
 	 * Animates the entire quizLinearLayout on or off screen
 	 */
 	private fun animate(animateOut: Boolean) {
-		// prevent animation into the the UI for the first flag
+		// prevent animation into the the UI for the first question
 		if (correctAnswers == 0)
 			return
 
@@ -304,8 +306,8 @@ class MainActivityFragment : Fragment() {
 	}
 
 	companion object {
-		private val TAG = "FlagQuiz Activity"
-		private val FLAGS_IN_QUIZ = 10
+		private val TAG = "Quiz Activity"
+		private val QUESTIONS_COUNT = 10
 	}
 
 }

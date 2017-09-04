@@ -19,9 +19,9 @@
         android:text="@string/question"/>
 
     <ImageView
-        android:id="@+id/flagImageView"
+        android:id="@+id/questionImageView"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
+        android:layout_height="match_parent"
         android:layout_gravity="center"
         android:layout_marginBottom="@dimen/spacing"
         android:layout_marginLeft="@dimen/activity_horizontal_margin"
@@ -36,7 +36,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
-        android:text="@string/guess_country"/>
+        android:text="@string/guess_champion_name"/>
 
     <LinearLayout
         android:id="@+id/row1LinearLayout"
@@ -52,7 +52,9 @@
             android:layout_weight="1"
             android:lines="2"
             android:text="Button"
-            android:textColor="@color/button_text_color"/>
+            android:textAllCaps="false"
+            android:textColor="@color/button_text_color"
+            />
 
         <Button
             android:id="@+id/button2"
@@ -62,6 +64,7 @@
             android:layout_weight="1"
             android:lines="2"
             android:text="Button"
+            android:textAllCaps="false"
             android:textColor="@color/button_text_color"/>
 
     </LinearLayout>
@@ -80,6 +83,7 @@
             android:layout_weight="1"
             android:lines="2"
             android:text="Button"
+            android:textAllCaps="false"
             android:textColor="@color/button_text_color"/>
 
         <Button
@@ -90,6 +94,7 @@
             android:layout_weight="1"
             android:lines="2"
             android:text="Button"
+            android:textAllCaps="false"
             android:textColor="@color/button_text_color"/>
 
     </LinearLayout>
@@ -108,6 +113,7 @@
             android:layout_weight="1"
             android:lines="2"
             android:text="Button"
+            android:textAllCaps="false"
             android:textColor="@color/button_text_color"/>
 
         <Button
@@ -118,6 +124,7 @@
             android:layout_weight="1"
             android:lines="2"
             android:text="Button"
+            android:textAllCaps="false"
             android:textColor="@color/button_text_color"/>
 
     </LinearLayout>
@@ -136,6 +143,7 @@
             android:layout_weight="1"
             android:lines="2"
             android:text="Button"
+            android:textAllCaps="false"
             android:textColor="@color/button_text_color"/>
 
         <Button
@@ -146,6 +154,7 @@
             android:layout_weight="1"
             android:lines="2"
             android:text="Button"
+            android:textAllCaps="false"
             android:textColor="@color/button_text_color"/>
 
     </LinearLayout>
